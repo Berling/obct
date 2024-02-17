@@ -1,0 +1,60 @@
+name: obct
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - run: rustup component add clippy
+    - run: rustup +nightly component add miri
+    - name: Build
+      run: cargo build --verbose
+    - name: Clippy
+      run: cargo clippy --all-targets --all-features -- -A dead-code -D warnings -W clippy::pedantic
+    - name: Miri
+      run: cargo +nightly miri test
+    - name: Run tests
+      run: cargo test --verbose
+  coverage:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@master
+    - run: rustup component add llvm-tools-preview
+    - run: cargo install cargo-binutils
+    - name: Run tests
+      run: RUSTFLAGS="-C instrument-coverage" cargo test --tests
+    - name: Merge profdata
+      run: cargo profdata -- merge -sparse */default_*.profraw -o merged.profdata
+    - name: Generate report
+      run: |
+        cargo cov -- export \
+          $( \
+            for file in \
+              $( \
+                RUSTFLAGS="-C instrument-coverage" \
+                RUSTDOCFLAGS="-C instrument-coverage -Z unstable-options --persist-doctests target/debug/doctestbins" \
+                  cargo test --no-run --message-format=json \
+                    | jq -r "select(.profile.test == true) | .filenames[]" \
+                    | grep -v dSYM - \
+              ) \
+              target/debug/doctestbins/*/rust_out; \
+            do \
+              [[ -x $file ]] && printf "%s %s " -object $file; \
+            done \
+          ) \
+        --instr-profile=merged.profdata --ignore-filename-regex=/.cargo/registry --ignore-filename-regex=/rust --format=lcov > coverage.txt
+    - run: cat coverage.txt
+    - name: Upload report
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./coverage.txt
+        fail_ci_if_error: true
+        verbose: true
