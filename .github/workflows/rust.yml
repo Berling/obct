@@ -31,7 +31,7 @@ jobs:
       - name: Run tests
         run: RUSTFLAGS="-C instrument-coverage" cargo test --tests
       - name: Merge profdata
-        run: cargo profdata -- merge -sparse */default_*.profraw -o merged.profdata
+        run: cargo profdata -- merge -sparse default_*.profraw -o merged.profdata
       - name: Generate report
         run: |
           cargo cov -- export \
