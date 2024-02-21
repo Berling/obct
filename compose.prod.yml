@@ -1,0 +1,4 @@
+services:
+  obct:
+    image: ghcr.io/obct:latest
+    restart: always

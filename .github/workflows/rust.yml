@@ -96,7 +96,7 @@ jobs:
           username: ${{ secrets.DEPLOY_USERNAME }}
           port: 22
           key: ${{ secrets.DEPLOY_KEY }}
-          source: "./compose.yml"
+          source: "./compose.yml,./compose.prod.yml"
           target: "~/.deploy/${{ github.event.repository.name }}/"
       - name: remote docker-compose up via ssh
         uses: appleboy/ssh-action@master
@@ -112,5 +112,5 @@ jobs:
           script: |
             echo $APPTOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             cd ~/.deploy/${{ github.event.repository.name }}
-            docker compose -f ./compose.yml pull
-            docker compose -f ./compose.yml up
+            docker compose -f ./compose.yml -f ./compose.prod.yml pull
+            docker compose -f ./compose.yml -f ./compose.prod.yml up
