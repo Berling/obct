@@ -112,5 +112,5 @@ jobs:
           script: |
             echo $APPTOKEN | docker login ghcr.io -u $USERNAME --password-stdin
             cd ~/.deploy/${{ github.event.repository.name }}
-            docker compose -f ./compose.yml -f ./compose.prod.yml pull
-            docker compose -f ./compose.yml -f ./compose.prod.yml up
+            docker compose -f ./compose.prod.yml pull
+            docker compose -f ./compose.prod.yml up
