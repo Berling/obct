@@ -1,6 +1,6 @@
 services:
   obct:
-    image: ghcr.io/obct:latest
+    image: ghcr.io/berling/obct:latest
     restart: always
     ports:
       - "80:3000"
