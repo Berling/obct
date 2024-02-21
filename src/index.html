@@ -137,6 +137,16 @@
 
     <img id="beer" src="beer" />
     <img id="note" src="note" />
+
+    <video autoplay loop muted>
+        <source src="music" />
+    </video>
+
+    <script>
+        window.onload = function () {
+            document.querySelector("video").muted = false;
+        };
+    </script>
 </body>
 
 </html>
