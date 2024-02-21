@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <title>Oli's Beer Cashback for Tidal</title>
+    <meta charset='utf-8'>
+    <style>
+        body {
+            background-image: linear-gradient(red, yellow);
+            height: 100vh;
+            margin: 0;
+        }
+
+        @keyframes blink {
+            0% {
+                opacity: 0.7;
+                scale: 1;
+            }
+
+            50% {
+                opacity: 1;
+                scale: 1.05;
+            }
+
+            100% {
+                opacity: 0.7;
+                scale: 1;
+            }
+        }
+
+        #heading {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            height: 60vmin;
+            animation: blink normal 1s infinite ease-in-out;
+            position: sticky;
+            z-index: 99;
+        }
+
+        svg {
+            font-weight: bold;
+            font-size: 10em;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            width: 100%;
+            height: 200px;
+        }
+
+        text {
+            fill: black;
+            stroke: white;
+            stroke-width: 0.05em;
+            stroke-linejoin: round;
+        }
+
+        #counter {
+            position: sticky;
+            z-index: 98;
+        }
+
+        @keyframes wiggle {
+            0% {
+                scale: 1;
+                transform: rotate(-30deg);
+            }
+
+            50% {
+                scale: 1.5;
+                transform: rotate(40deg);
+            }
+
+            100% {
+                scale: 1;
+                transform: rotate(-30deg);
+            }
+        }
+
+        #note {
+            width: 15vmin;
+            position: absolute;
+            top: 55vmin;
+            left: 20vmin;
+            animation: wiggle normal 3s infinite ease-in-out;
+        }
+
+
+        @keyframes wiggle-alternate {
+            0% {
+                scale: 1;
+                transform: rotate(40deg);
+            }
+
+            50% {
+                scale: 1.5;
+                transform: rotate(-40deg);
+            }
+
+            100% {
+                scale: 1;
+                transform: rotate(40deg);
+            }
+        }
+
+        #beer {
+            width: 15vmin;
+            position: absolute;
+            top: 55vmin;
+            right: 20vmin;
+            animation: wiggle-alternate normal 3s infinite ease-in-out;
+        }
+    </style>
+    <script>
+        function loadCounter() {
+            const url = window.location.href + "value";
+            var http = new XMLHttpRequest();
+            http.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("counter").getElementsByTagName("text").item(0).innerHTML = http.responseText;
+                }
+            };
+            http.open("GET", url);
+            http.send();
+        }
+
+        setInterval(loadCounter, 1000);
+    </script>
+</head>
+
+<body>
+    <img id="heading" src="heading" />
+
+    <svg id="counter" viewBox="0 0 200 200">
+        <rect width="200" height="200" style="fill-opacity: 0;"></rect>
+        <text x="100" y="150" alignment-baseline="middle" text-anchor="middle"></text>
+    </svg>
+
+    <img id="beer" src="beer" />
+    <img id="note" src="note" />
+</body>
+
+</html>
