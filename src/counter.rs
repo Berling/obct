@@ -27,7 +27,7 @@ impl Counter {
     }
 
     pub fn update(&self) {
-        let amount = month_diff(Utc::now().naive_local().date(), self.last_modified()) as usize;
+        let amount = month_diff(Utc::now().naive_local().date(), Self::last_modified()) as usize;
         self.increase(amount);
     }
 
@@ -49,11 +49,11 @@ impl Counter {
         Self::write_counter(new_value);
     }
 
-    fn last_modified(&self) -> NaiveDate {
+    fn last_modified() -> NaiveDate {
         let path = Path::new(Self::FILE_NAME);
         let last_modfied = path.metadata().unwrap().modified().unwrap();
         let millis = last_modfied.duration_since(UNIX_EPOCH).unwrap().as_millis();
-        NaiveDateTime::from_timestamp_millis(millis as i64)
+        NaiveDateTime::from_timestamp_millis(i64::try_from(millis).unwrap())
             .unwrap()
             .date()
     }
