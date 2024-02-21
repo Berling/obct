@@ -1,5 +1,9 @@
 name: obct
 
+permissions:
+  packages: write
+  contents: write
+
 on:
   push:
     branches:
