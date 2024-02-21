@@ -58,3 +58,23 @@ jobs:
           files: ./coverage.txt
           fail_ci_if_error: true
           verbose: true
+  push:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@master
+      - name: Env variable assignment
+        run: echo "image_repository_name=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@master
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push Docker images
+        uses: docker/build-push-action@master
+        with:
+          file: Dockerfile
+          context: .
+          push: true
+          tags: ghcr.io/${{ env.image_repository_name }}:latest
