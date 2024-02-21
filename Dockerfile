@@ -12,6 +12,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
 USER $USERNAME
 
 EXPOSE 3000
-COPY --from=build /target/release/obct /obct
-ENTRYPOINT /obct
-CMD /obct
+COPY --from=build /target/release/obct /obct/obct
+ENTRYPOINT /obct/obct
+CMD /obct/obct
