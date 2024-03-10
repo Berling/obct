@@ -27,7 +27,9 @@ impl Counter {
     }
 
     pub fn update(&self) {
-        let amount = month_diff(Utc::now().naive_local().date(), Self::last_modified()) as usize;
+        let from = Self::last_modified();
+        let to = Utc::now().naive_local().date();
+        let amount = month_diff(from, to) as usize;
         self.increase(amount);
     }
 
@@ -97,9 +99,41 @@ fn month_diff(from: NaiveDate, to: NaiveDate) -> u32 {
 
 #[cfg(test)]
 mod tests {
-    use chrono::NaiveDate;
+    use std::{
+        fs::File,
+        path::Path,
+        time::{Duration, SystemTime, UNIX_EPOCH},
+    };
 
-    use super::month_diff;
+    use chrono::{Months, NaiveDate, NaiveDateTime, NaiveTime};
+
+    use super::{month_diff, Counter};
+
+    #[test]
+    fn test_counter() {
+        let now = SystemTime::now();
+        let now = now.duration_since(UNIX_EPOCH).unwrap().as_millis();
+        let now = NaiveDateTime::from_timestamp_millis(i64::try_from(now).unwrap())
+            .unwrap()
+            .date();
+        let month_before = now.checked_sub_months(Months::new(1)).expect("valid date");
+        let month_before = month_before.and_time(NaiveTime::MIN).and_utc().timestamp();
+        let month_before = UNIX_EPOCH
+            .checked_add(Duration::from_secs(month_before as u64))
+            .expect("valid date");
+        let path = Path::new(Counter::FILE_NAME);
+        if path.exists() {
+            std::fs::remove_file(path).expect("delete file");
+        }
+        let counter = Counter::new();
+        let file = File::create(path).expect("counter file");
+        file.set_modified(month_before)
+            .expect("set mdofication date");
+
+        assert_eq!(counter.get(), 0);
+        counter.update();
+        assert_eq!(counter.get(), 1)
+    }
 
     #[test]
     fn test_month_diff() {
