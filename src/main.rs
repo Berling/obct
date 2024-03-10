@@ -34,6 +34,10 @@ async fn main() {
         .route("/value", get(value))
         .with_state(counter.clone())
         .route("/reset", get(reset))
+        .with_state(counter.clone())
+        .route("/increment", get(increase))
+        .with_state(counter.clone())
+        .route("/decrement", get(decrease))
         .with_state(counter);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
@@ -79,4 +83,12 @@ async fn value(State(state): State<Arc<Counter>>) -> String {
 
 async fn reset(State(state): State<Arc<Counter>>) {
     state.decrease(state.get());
+}
+
+async fn increase(State(state): State<Arc<Counter>>) {
+    state.increase(1);
+}
+
+async fn decrease(State(state): State<Arc<Counter>>) {
+    state.decrease(1);
 }
