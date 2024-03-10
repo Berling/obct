@@ -109,6 +109,7 @@ mod tests {
 
     use super::{month_diff, Counter};
 
+    #[allow(clippy::cast_sign_loss)]
     #[test]
     fn test_counter() {
         let now = SystemTime::now();
@@ -132,7 +133,7 @@ mod tests {
 
         assert_eq!(counter.get(), 0);
         counter.update();
-        assert_eq!(counter.get(), 1)
+        assert_eq!(counter.get(), 1);
     }
 
     #[test]
