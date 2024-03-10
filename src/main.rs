@@ -35,9 +35,9 @@ async fn main() {
         .with_state(counter.clone())
         .route("/reset", get(reset))
         .with_state(counter.clone())
-        .route("/increment", get(increase))
+        .route("/increase", get(increase))
         .with_state(counter.clone())
-        .route("/decrement", get(decrease))
+        .route("/decrease", get(decrease))
         .with_state(counter);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
